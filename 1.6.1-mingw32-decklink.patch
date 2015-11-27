@@ -1,0 +1,75 @@
+--- origsrc/gst-plugins-bad-1.6.1/configure.ac	2015-10-30 07:11:05.000000000 -0500
++++ src/gst-plugins-bad-1.6.1/configure.ac	2015-11-24 10:24:23.460394600 -0600
+@@ -1910,6 +1910,12 @@ AG_GST_CHECK_FEATURE(DECKLINK, [decklink
+            ])
+        fi
+        ;;
++     *-*mingw*)
++       HAVE_DECKLINK=yes
++       DECKLINK_CXXFLAGS=
++       DECKLINK_LIBS="-lole32"
++       HAVE_DECKLINK_WIN=yes
++       ;;
+      *)
+        HAVE_DECKLINK=no
+        ;;
+@@ -1919,6 +1925,7 @@ AG_GST_CHECK_FEATURE(DECKLINK, [decklink
+    AC_SUBST(DECKLINK_LIBS)
+ ])
+ AM_CONDITIONAL(DECKLINK_OSX, test "x$HAVE_DECKLINK_OSX" = xyes)
++AM_CONDITIONAL(DECKLINK_WIN, test "x$HAVE_DECKLINK_WIN" = xyes)
+ 
+ dnl **** DirectFB ****
+ translit(dnm, m, l) AM_CONDITIONAL(USE_DIRECTFB, true)
+--- origsrc/gst-plugins-bad-1.6.1/sys/decklink/Makefile.am	2015-10-22 03:04:08.000000000 -0500
++++ src/gst-plugins-bad-1.6.1/sys/decklink/Makefile.am	2015-11-24 00:52:15.990238900 -0600
+@@ -34,9 +34,16 @@ if DECKLINK_OSX
+ libgstdecklink_la_SOURCES += \
+ 	osx/DeckLinkAPIDispatch.cpp
+ else
++if DECKLINK_WIN
++libgstdecklink_la_CPPFLAGS += \
++	-DCOBJMACROS=1
++libgstdecklink_la_SOURCES += \
++	win/DeckLinkAPIDispatch.cpp
++else
+ libgstdecklink_la_SOURCES += \
+ 	linux/DeckLinkAPIDispatch.cpp
+ endif
++endif
+ 
+ noinst_HEADERS = \
+ 	gstdecklink.h \
+--- origsrc/gst-plugins-bad-1.6.1/sys/decklink/gstdecklink.cpp	2015-10-22 03:04:08.000000000 -0500
++++ src/gst-plugins-bad-1.6.1/sys/decklink/gstdecklink.cpp	2015-11-24 00:58:48.362123000 -0600
+@@ -533,7 +533,7 @@ public:
+   }
+ };
+ 
+-#ifdef _MSC_VER
++#ifdef G_OS_WIN32
+ /* FIXME: We currently never deinit this */
+ 
+ static GMutex com_init_lock;
+@@ -596,7 +596,7 @@ init_devices (gpointer data)
+   HRESULT ret;
+   int i;
+ 
+-#ifdef _MSC_VER
++#ifdef G_OS_WIN32
+   // Start COM thread for Windows
+ 
+   g_mutex_lock (&com_init_lock);
+--- origsrc/gst-plugins-bad-1.6.1/sys/decklink/win/DeckLinkAPI.h	2015-10-22 03:04:08.000000000 -0500
++++ src/gst-plugins-bad-1.6.1/sys/decklink/win/DeckLinkAPI.h	2015-11-24 00:57:02.328738100 -0600
+@@ -13301,6 +13301,10 @@ EXTERN_C const IID IID_IDeckLinkInput_v7
+ 
+ /* Additional Prototypes for ALL interfaces */
+ 
++extern "C" {
++    IDeckLinkIterator* CreateDeckLinkIteratorInstance (void);
++}
++
+ /* end of Additional Prototypes */
+ 
+ #ifdef __cplusplus

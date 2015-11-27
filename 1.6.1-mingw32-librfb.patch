@@ -1,0 +1,12 @@
+--- origsrc/gst-plugins-bad-1.6.1/gst/librfb/gstrfbsrc.c	2015-10-22 03:04:08.000000000 -0500
++++ src/gst-plugins-bad-1.6.1/gst/librfb/gstrfbsrc.c	2015-11-24 11:05:34.056350800 -0600
+@@ -30,6 +30,9 @@
+ 
+ #include <string.h>
+ #include <stdlib.h>
++#ifdef G_OS_WIN32
++#undef HAVE_X11
++#endif
+ #ifdef HAVE_X11
+ #include <X11/Xlib.h>
+ #endif

@@ -1,0 +1,65 @@
+CROSS_HOST="x86_64-w64-mingw32"
+GST_PLUGINS_ENABLE="acm assrender bs2b bz2 chromaprint curl dash direct3d
+	direct3d9 directshow directsound dtls fluidsynth gme gsm hls kate
+	modplug openal openexr opengl openjpeg opus resindvd rsvg schro
+	sndfile soundtouch wasapi webp wildmidi wininet winks winscreencap"
+GST_PLUGINS_DISABLE="flite ladspa neon ofa opencv zbar apple_media avc bluez
+	osx_video quicktime uvch264 vcd cdaudio dc1394 directfb wayland dts
+	faac faad fbdev libmms linsys mimic mpeg2enc mpg123 mplex mythtv pvr
+	teletextdec spc swfdec xvid dvb vdpau rtmp spandsp sndio voamrwbenc
+	voaacenc srtp x265 decklink gtk3 qt"
+inherit cross gst-plugins
+
+NAME="mingw64-x86_64-gstreamer1.0-plugins-bad-free"
+VERSION=1.6.1
+RELEASE=1
+CATEGORY="Devel"
+SUMMARY="GStreamer 1.0 Bad plugins for Win64 toolchain"
+DESCRIPTION="GStreamer Bad Plug-ins is a set of plug-ins that aren't up to par
+compared to the rest. They might be close to being good quality, but they're
+missing something - be it a good code review, some documentation, a set of
+tests, a real live maintainer, or some actual wide use."
+md5sum=d1f2cb1d8c5202dfc4e60fcd81d06acc
+SRC_URI="http://pkgs.fedoraproject.org/repo/pkgs/gstreamer1-plugins-bad-free/gst-plugins-bad-${VERSION}.tar.xz/${md5sum}/gst-plugins-bad-${VERSION}.tar.xz"
+SRC_DIR="gst-plugins-bad-${VERSION}"
+PATCH_URI="
+	1.6.1-mingw32-curl.patch
+	1.6.1-mingw32-librfb.patch
+"
+
+PKG_NAMES="${NAME} ${NAME}-extras"
+
+# flite neon ofa opencv zbar
+for ext in assrender bs2b chromaprint curl fluidsynth gme kate \
+	   modplug openal openexr openjpeg schro wildmidi
+do
+	mingw64_x86_64_gstreamer1_0_plugins_bad_free_CONTENTS+=" --exclude=libgst${ext}*"
+	mingw64_x86_64_gstreamer1_0_plugins_bad_free_extras_CONTENTS+=" ${CROSS_LIBDIR#/}/gstreamer-1.0/libgst${ext}*"
+done
+unset ext
+mingw64_x86_64_gstreamer1_0_plugins_bad_free_CONTENTS+="
+	--exclude=libgstgtksink.dll --exclude=libqtsink.dll
+	${CROSS_PREFIX#/}
+	usr/share/doc/
+"
+#PKG_NAMES+=" mingw64-x86_64-gstreamer1.0-plugins-gtk"
+mingw64_x86_64_gstreamer1_0_plugins_gtk_CONTENTS="${CROSS_LIBDIR#/}/gstreamer-1.0/libgstgtksink.dll"
+#PKG_NAMES+=" mingw64-x86_64-gstreamer1.0-plugins-qt"
+mingw64_x86_64_gstreamer1_0_plugins_qt_CONTENTS="${CROSS_LIBDIR#/}/gstreamer-1.0/libqtsink.dll"
+
+DIFF_EXCLUDES+=" *.gschema.xml"
+
+# frei0r plugins use .so suffix
+CPPFLAGS+=' -DGST_EXTRA_MODULE_SUFFIX="\".so\""'
+
+src_compile() {
+        cd ${S}
+        gst_plugins_autoreconf
+
+        cd ${B}
+	PATH="${B}/gst-libs/gst/base/.libs:${B}/gst-libs/gst/basecamerabinsrc/.libs:${B}/gst-libs/gst/codecparsers/.libs:${B}/gst-libs/gst/gl/.libs:${B}/gst-libs/gst/insertbin/.libs:${B}/gst-libs/gst/interfaces/.libs:${B}/gst-libs/gst/mpegts/.libs:${B}/gst-libs/gst/uridownloader/.libs:${B}/gst-libs/gst/video/.libs:$PATH"
+        gst_plugins_compile \
+		--disable-cocoa --disable-glx --enable-wgl
+}
+
+KEEP_LA_FILES="none"
