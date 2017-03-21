@@ -1,17 +1,17 @@
 CROSS_HOST="x86_64-w64-mingw32"
 GST_PLUGINS_ENABLE="acm assrender bs2b bz2 chromaprint curl dash direct3d
 	direct3d9 directshow directsound dtls fluidsynth gme gsm hls kate
-	modplug openal openexr opengl openjpeg opus resindvd rsvg schro
+	modplug openal openexr opengl openjpeg resindvd rsvg schro
 	sndfile soundtouch wasapi webp wildmidi wininet winks winscreencap"
 GST_PLUGINS_DISABLE="flite ladspa neon ofa opencv zbar apple_media avc bluez
 	osx_video quicktime uvch264 vcd cdaudio dc1394 directfb wayland dts
-	faac faad fbdev libmms linsys mimic mpeg2enc mpg123 mplex mythtv pvr
+	faac faad fbdev libmms linsys mimic mpeg2enc mplex mythtv pvr
 	teletextdec spc swfdec xvid dvb vdpau rtmp spandsp sndio voamrwbenc
-	voaacenc srtp x265 decklink gtk3 qt"
+	voaacenc srtp webrtcdsp x265 decklink gtk3 qt"
 inherit cross gst-plugins
 
 NAME="mingw64-x86_64-gstreamer1.0-plugins-bad-free"
-VERSION=1.6.4
+VERSION=1.10.4
 RELEASE=1
 CATEGORY="Devel"
 SUMMARY="GStreamer 1.0 Bad plugins for Win64 toolchain"
@@ -19,13 +19,12 @@ DESCRIPTION="GStreamer Bad Plug-ins is a set of plug-ins that aren't up to par
 compared to the rest. They might be close to being good quality, but they're
 missing something - be it a good code review, some documentation, a set of
 tests, a real live maintainer, or some actual wide use."
-md5sum=a278efbaea8a9caa9719a5315c18653b
-SRC_URI="http://pkgs.fedoraproject.org/repo/pkgs/gstreamer1-plugins-bad-free/gst-plugins-bad-free-${VERSION}.tar.xz/${md5sum}/gst-plugins-bad-free-${VERSION}.tar.xz"
+sha512sum=db2086ceb0e1026617590d51aaeddfe63720d4941cc551c90e8f59b544a4b8e01cc7eae9bd7eb42309a852f06276af499cb631094e415d646abbd7ef503015e6
+SRC_URI="http://pkgs.fedoraproject.org/repo/pkgs/${NAME/.0/}/${ORIG_PN}-${VERSION}.tar.xz/sha512/${sha512sum}/${ORIG_PN}-${VERSION}.tar.xz"
 SRC_DIR="gst-plugins-bad-${VERSION}"
 PATCH_URI="
 	1.6.1-mingw32-curl.patch
 	1.6.1-mingw32-librfb.patch
-	1.6.3-acm-port-to-gst1.patch
 	1.6.3-acm-mingw64.patch
 "
 
