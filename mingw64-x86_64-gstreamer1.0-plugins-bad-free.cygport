@@ -11,16 +11,16 @@ GST_PLUGINS_DISABLE="flite ladspa neon ofa opencv zbar apple_media avc bluez
 inherit cross gst-plugins
 
 NAME="mingw64-x86_64-gstreamer1.0-plugins-bad-free"
-VERSION=1.10.4
-RELEASE=2
+VERSION=1.10.5
+RELEASE=1
 CATEGORY="Devel"
 SUMMARY="GStreamer 1.0 Bad plugins for Win64 toolchain"
 DESCRIPTION="GStreamer Bad Plug-ins is a set of plug-ins that aren't up to par
 compared to the rest. They might be close to being good quality, but they're
 missing something - be it a good code review, some documentation, a set of
 tests, a real live maintainer, or some actual wide use."
-sha512sum=db2086ceb0e1026617590d51aaeddfe63720d4941cc551c90e8f59b544a4b8e01cc7eae9bd7eb42309a852f06276af499cb631094e415d646abbd7ef503015e6
-SRC_URI="http://pkgs.fedoraproject.org/repo/pkgs/${NAME/.0/}/${ORIG_PN}-${VERSION}.tar.xz/sha512/${sha512sum}/${ORIG_PN}-${VERSION}.tar.xz"
+sha512sum=fa95adfb3d41434eeb1054746e1d09a7bc45209658eaaaa5042c1bf4d269f8039a8f7da5a3c3faf7e75bef2a3a1789750e12cce064ea3a153af1d3d033c7e7e0
+SRC_URI="http://pkgs.fedoraproject.org/repo/pkgs/gstreamer1-plugins-bad-free/${ORIG_PN}-${VERSION}.tar.xz/sha512/${sha512sum}/${ORIG_PN}-${VERSION}.tar.xz"
 SRC_DIR="gst-plugins-bad-${VERSION}"
 PATCH_URI="
 	1.6.1-mingw32-curl.patch
