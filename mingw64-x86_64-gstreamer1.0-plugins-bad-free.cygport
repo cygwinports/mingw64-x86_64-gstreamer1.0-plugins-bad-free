@@ -12,7 +12,7 @@ inherit cross gst-plugins
 
 NAME="mingw64-x86_64-gstreamer1.0-plugins-bad-free"
 VERSION=1.10.5
-RELEASE=1
+RELEASE=2
 CATEGORY="Devel"
 SUMMARY="GStreamer 1.0 Bad plugins for Win64 toolchain"
 DESCRIPTION="GStreamer Bad Plug-ins is a set of plug-ins that aren't up to par
