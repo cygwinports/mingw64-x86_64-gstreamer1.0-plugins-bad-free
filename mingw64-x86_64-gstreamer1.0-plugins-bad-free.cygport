@@ -1,6 +1,6 @@
 CROSS_HOST="x86_64-w64-mingw32"
 GST_PLUGINS_ENABLE="acm assrender bs2b bz2 chromaprint curl dash direct3d
-	direct3d9 directshow directsound dtls fluidsynth gme gsm hls kate
+	direct3d9 directshow directsound dtls fdk_aac fluidsynth gme gsm hls kate
 	modplug openal openexr opengl openjpeg resindvd rsvg schro
 	sndfile soundtouch wasapi webp wildmidi wininet winks winscreencap"
 GST_PLUGINS_DISABLE="flite ladspa neon ofa opencv zbar apple_media avc bluez
@@ -12,7 +12,7 @@ inherit cross gst-plugins
 
 NAME="mingw64-x86_64-gstreamer1.0-plugins-bad-free"
 VERSION=1.12.4
-RELEASE=1
+RELEASE=2
 CATEGORY="Devel"
 SUMMARY="GStreamer 1.0 Bad plugins for Win64 toolchain"
 DESCRIPTION="GStreamer Bad Plug-ins is a set of plug-ins that aren't up to par
