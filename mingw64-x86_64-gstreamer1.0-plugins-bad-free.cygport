@@ -1,9 +1,9 @@
 CROSS_HOST="x86_64-w64-mingw32"
 GST_PLUGINS_ENABLE="acm assrender bs2b bz2 chromaprint curl dash direct3d
 	direct3d9 directshow directsound dtls fdk_aac fluidsynth gme gsm hls kate
-	modplug openal openexr opengl openjpeg resindvd rsvg schro
+	modplug openal opencv openexr opengl openjpeg resindvd rsvg
 	sndfile soundtouch wasapi webp wildmidi wininet winks winscreencap"
-GST_PLUGINS_DISABLE="flite ladspa neon ofa opencv zbar apple_media avc bluez
+GST_PLUGINS_DISABLE="flite ladspa neon ofa zbar apple_media avc bluez
 	osx_video quicktime uvch264 vcd cdaudio dc1394 directfb wayland dts
 	faac faad fbdev libmms linsys mimic mpeg2enc mplex mythtv openh264 pvr
 	teletextdec spc swfdec xvid dvb vdpau rtmp spandsp sndio voamrwbenc
@@ -11,28 +11,29 @@ GST_PLUGINS_DISABLE="flite ladspa neon ofa opencv zbar apple_media avc bluez
 inherit cross gst-plugins
 
 NAME="mingw64-x86_64-gstreamer1.0-plugins-bad-free"
-VERSION=1.12.4
-RELEASE=2
+VERSION=1.12.5
+RELEASE=1
 CATEGORY="Devel"
 SUMMARY="GStreamer 1.0 Bad plugins for Win64 toolchain"
 DESCRIPTION="GStreamer Bad Plug-ins is a set of plug-ins that aren't up to par
 compared to the rest. They might be close to being good quality, but they're
 missing something - be it a good code review, some documentation, a set of
 tests, a real live maintainer, or some actual wide use."
-sha512sum=07230161a983ed9f0d6947d52660b112ee330867b8a52cfb2c25b7b23bb6483eef7ace5097afb00c8a8e14c063dc5ca89a4e5a92ceb81edf8c9b1f3b10c10378
-SRC_URI="http://pkgs.fedoraproject.org/repo/pkgs/gstreamer1-plugins-bad-free/${ORIG_PN}-${VERSION}.tar.xz/sha512/${sha512sum}/${ORIG_PN}-${VERSION}.tar.xz"
+sha512sum=4c2ec8fd2c93f52659ad881a75b38031337179bb6955c19a6cd216efff7ee2f3327b9530a1649b350eaab891d420cecbed3a9d496957241982507e984953a8fc
+SRC_URI="http://src.fedoraproject.org/repo/pkgs/gstreamer1-plugins-bad-free/${ORIG_PN}-${VERSION}.tar.xz/sha512/${sha512sum}/${ORIG_PN}-${VERSION}.tar.xz"
 SRC_DIR="gst-plugins-bad-${VERSION}"
 PATCH_URI="
 	1.6.1-mingw32-curl.patch
 	1.6.1-mingw32-librfb.patch
 	1.6.3-acm-mingw64.patch
+	1.12.5-opencv34.patch
 "
 
 PKG_NAMES="${NAME} ${NAME}-extras"
 
-# flite neon ofa opencv zbar
+# flite neon ofa zbar
 for ext in assrender bs2b chromaprint curl fluidsynth gme kate \
-	   modplug openal openexr openjpeg schro wildmidi
+	   modplug openal opencv openexr openjpeg wildmidi
 do
 	mingw64_x86_64_gstreamer1_0_plugins_bad_free_CONTENTS+=" --exclude=libgst${ext}*"
 	mingw64_x86_64_gstreamer1_0_plugins_bad_free_extras_CONTENTS+=" ${CROSS_LIBDIR#/}/gstreamer-1.0/libgst${ext}*"
@@ -40,13 +41,22 @@ done
 unset ext
 mingw64_x86_64_gstreamer1_0_plugins_bad_free_CONTENTS+="
 	--exclude=libgstgtksink.dll --exclude=libqtsink.dll
+	--exclude=libgstopencv* --exclude=opencv
 	${CROSS_PREFIX#/}
 	usr/share/doc/
+"
+mingw64_x86_64_gstreamer1_0_plugins_bad_free_extras_CONTENTS+="
+	${CROSS_BINDIR#/}/libgstopencv-1.0-0.dll
 "
 #PKG_NAMES+=" mingw64-x86_64-gstreamer1.0-plugins-gtk"
 mingw64_x86_64_gstreamer1_0_plugins_gtk_CONTENTS="${CROSS_LIBDIR#/}/gstreamer-1.0/libgstgtksink.dll"
 #PKG_NAMES+=" mingw64-x86_64-gstreamer1.0-plugins-qt"
 mingw64_x86_64_gstreamer1_0_plugins_qt_CONTENTS="${CROSS_LIBDIR#/}/gstreamer-1.0/libqtsink.dll"
+# private API afaics
+PKG_IGNORE="
+	${CROSS_INCLUDEDIR#/}/gstreamer-1.0/gst/opencv/
+	${CROSS_LIBDIR#/}/libgstopencv-1.0.dll.a
+"
 
 DIFF_EXCLUDES+=" *.gschema.xml"
 
